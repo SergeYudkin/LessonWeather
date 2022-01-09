@@ -100,7 +100,7 @@ class MainFragment : Fragment(), OnMyItemClickListener {
     }
 
     override fun onItemClick(weather: Weather) {
-        val bundle = Bundle()
+        val bundle=Bundle()
         bundle.putParcelable(BUNDLE_KEY,weather)
         requireActivity().supportFragmentManager.beginTransaction().add(R.id.container,
         DetailsFragment.newInstance(bundle))

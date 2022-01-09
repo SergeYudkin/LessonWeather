@@ -65,7 +65,6 @@ class DetailsFragment: Fragment() {
         }
 
         companion object {
-
             fun newInstance(bundle: Bundle):DetailsFragment{
                 val fragment = DetailsFragment()
                 fragment.arguments = bundle
