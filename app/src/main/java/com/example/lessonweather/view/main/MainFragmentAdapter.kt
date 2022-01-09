@@ -1,0 +1,48 @@
+package com.example.lessonweather.view.main
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.recyclerview.widget.RecyclerView
+import com.example.lessonweather.R
+import com.example.lessonweather.databinding.MainRecyclerItemBinding
+import com.example.lessonweather.model.Weather
+
+class MainFragmentAdapter(val listener: OnMyItemClickListener): RecyclerView.Adapter<MainFragmentAdapter.MainViewHolder>() {
+
+
+    private var weatherData:List<Weather> = listOf()
+
+    fun setWeather(data:List<Weather>){
+        this.weatherData = data
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainFragmentAdapter.MainViewHolder {
+        val binding: MainRecyclerItemBinding = MainRecyclerItemBinding
+            .inflate(LayoutInflater.from(parent.context),parent,false)
+            return MainViewHolder(binding.root)
+    }
+
+    override fun onBindViewHolder(holder: MainFragmentAdapter.MainViewHolder, position: Int) {
+        holder.bind(this.weatherData[position])
+    }
+
+    override fun getItemCount(): Int {
+        return weatherData.size
+    }
+
+   inner class MainViewHolder(view: View):RecyclerView.ViewHolder(view){
+        fun bind(weather: Weather){
+            val binding = MainRecyclerItemBinding.bind(itemView)
+            binding.mainFragmentRecyclerItemTextView.text = weather.city.name
+            binding.root.setOnClickListener {
+                listener.onItemClick(weather)
+            }
+        }
+    }
+
+
+}

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.lessonweather.R
 import com.example.lessonweather.databinding.ActivityMainBinding
+import com.example.lessonweather.view.main.MainFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState==null){
-            supportFragmentManager.beginTransaction().replace(R.id.container,MainFragment.newInstance())
+            supportFragmentManager.beginTransaction().replace(R.id.container, MainFragment.newInstance())
                 .commit()
 
         }

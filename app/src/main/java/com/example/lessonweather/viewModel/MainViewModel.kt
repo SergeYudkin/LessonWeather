@@ -9,32 +9,42 @@ import com.example.lessonweather.model.RepositoryImpl
 import java.lang.Thread.sleep
 
 class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiveData(),
-            private val repositoryImpl: RepositoryImpl = RepositoryImpl()): ViewModel() {
+                    private val repositoryImpl: RepositoryImpl = RepositoryImpl()): ViewModel() {
 
     fun getLiveData(): LiveData<AppState>{
         return liveData
     }
 
-    fun getWeatherFromServer(){
+        fun getWeatherFromLocalSourceRus()= getWeatherFromLocalServer(true)
+
+        fun getWeatherFromLocalSourceWorld()= getWeatherFromLocalServer(false)
+
+        fun getWeatherFromLocalSource()= getWeatherFromLocalServer(true) // заглушка на пятый урок
+
+
+
+
+    fun getWeatherFromLocalServer(isRussian:Boolean){
         liveData.postValue(AppState.Loading(10))
         Thread{
 
-            sleep(100)
+            sleep(1000)
             liveData.postValue(AppState.Error(IllegalStateException("")))
             val rand = (1..40).random()
-            if(rand>10) {
-                liveData.postValue(AppState.Success(repositoryImpl.getWeatherFromServer()))
+            if(true) {
+                liveData.postValue(
+                    AppState.Success(
+                        if (isRussian) repositoryImpl.getWeatherFromLocalStorageRus()
+                        else repositoryImpl.getWeatherFromLocalStorageWorld()
+                    )
+                )
+
             }else{
-                liveData.postValue(AppState.Error(IllegalStateException("")))
+               // liveData.postValue(AppState.Error(IllegalStateException("")))
 
             }
 
         }.start()
-    }
-
-    fun getWeather(){
-        // скоро будет переключатель
-        getWeatherFromServer()
     }
 
 

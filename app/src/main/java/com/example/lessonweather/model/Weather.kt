@@ -1,8 +1,15 @@
 package com.example.lessonweather.model
 
-data class Weather(val city:City = getDefaultCity(),val temperature:Int = -20,val  feelsLike:Int= -80)
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-data class City(val name: String,val lat:Double,val lon:Double)
+
+@Parcelize
+data class Weather(val city:City = getDefaultCity(),val temperature:Int = -20,val  feelsLike:Int= -80):Parcelable
+
+
+@Parcelize
+data class City(val name: String,val lat:Double,val lon:Double):Parcelable
 
 
 fun getDefaultCity() = City("Волгоград",48.7194,44.5018)
