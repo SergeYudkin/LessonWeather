@@ -25,60 +25,74 @@ class MainFragment : Fragment(), OnMyItemClickListener {
         return _binding!!
     }
 
-    private val adapter = MainFragmentAdapter(this)
+    private val adapter : MainFragmentAdapter by lazy{
+        MainFragmentAdapter(this)
+    }
     private var isRussian = true
 
-    private lateinit var viewModel: MainViewModel
+    private  val viewModel: MainViewModel by lazy {
+        ViewModelProvider(this).get(MainViewModel::class.java)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getLiveData().observe(viewLifecycleOwner, Observer<AppState> { renderData(it) }) //внимание
 
-        binding.mainFragmentRecyclerView.adapter= adapter
-        binding.mainFragmentFAB.setOnClickListener{
+        initView()
+        viewModel.getLiveData().observe(viewLifecycleOwner, Observer<AppState> { renderData(it) }) //внимание
+        viewModel.getWeatherFromLocalSourceRus()
+    }
+
+    private fun initView() {
+        with(binding){mainFragmentRecyclerView.adapter = adapter
+        binding.mainFragmentFAB.setOnClickListener {
             sentRequest()
         }
-        viewModel.getWeatherFromLocalSourceRus()
+        }
     }
 
     private fun sentRequest() {
         isRussian = !isRussian
-        if (isRussian) {
-            viewModel.getWeatherFromLocalSourceRus()
-            binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
-        } else {
-            viewModel.getWeatherFromLocalSourceWorld()
-            binding.mainFragmentFAB.setImageResource(R.drawable.ic_earth)
+        with(viewModel){
+            with(binding){
+                if (isRussian) {
+                    getWeatherFromLocalSourceRus()
+                    mainFragmentFAB.setImageResource(R.drawable.ic_russia)
+                } else {
+                    getWeatherFromLocalSourceWorld()
+                    mainFragmentFAB.setImageResource(R.drawable.ic_earth)
+                }
+            }
         }
 
     }
 
     private fun renderData(appState:AppState){
-         when(appState){
-             is AppState.Error -> {
-                 binding.mainFragmentLoadingLayout.visibility = View.GONE
-                 Snackbar.make(binding.root,"Error",Snackbar.LENGTH_LONG)
-                     .setAction("Попробовать ещё раз"){
-                         sentRequest()
-                     }.show()
-             }
-             is AppState.Loading -> {
-                 binding.mainFragmentLoadingLayout.visibility = View.GONE
-             }
-             is AppState.Success -> {
-                 binding.mainFragmentLoadingLayout.visibility = View.GONE
+        with(binding) {
+            when (appState) {
+                is AppState.Error -> {
+                    mainFragmentLoadingLayout.visibility = View.GONE
+                    Snackbar.make(root, "Error", Snackbar.LENGTH_LONG)
+                        .setAction("Попробовать ещё раз") {
+                            sentRequest()
+                        }.show()
+                }
+                is AppState.Loading -> {
+                    mainFragmentLoadingLayout.visibility = View.GONE
+                }
+                is AppState.Success -> {
+                    mainFragmentLoadingLayout.visibility = View.GONE
 
-                 adapter.setWeather(appState.weatherData)
+                    adapter.setWeather(appState.weatherData)
 
-                 Snackbar.make(binding.root,
-                     "Success",Snackbar.LENGTH_LONG).show()
-             }
-         }
-
+                    Snackbar.make(
+                        root,
+                        "Success", Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
 
      }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -88,7 +102,7 @@ class MainFragment : Fragment(), OnMyItemClickListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentMainBinding.inflate(inflater,container,false)
         return binding.root
     }
@@ -100,10 +114,17 @@ class MainFragment : Fragment(), OnMyItemClickListener {
     }
 
     override fun onItemClick(weather: Weather) {
-        val bundle=Bundle()
-        bundle.putParcelable(BUNDLE_KEY,weather)
-        requireActivity().supportFragmentManager.beginTransaction().add(R.id.container,
-        DetailsFragment.newInstance(bundle))
-            .addToBackStack("").commit()
+
+        activity?.run {
+            supportFragmentManager.beginTransaction()
+                .add(R.id.container,
+                    DetailsFragment.newInstance(
+                        Bundle().apply {
+                            putParcelable(BUNDLE_KEY, weather)
+                        }
+                    ))
+                .addToBackStack("").commit()
+
+        }
     }
 }

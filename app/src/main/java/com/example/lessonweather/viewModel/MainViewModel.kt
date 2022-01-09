@@ -2,7 +2,6 @@ package com.example.lessonweather.viewModel
 
 
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lessonweather.model.RepositoryImpl
@@ -11,9 +10,9 @@ import java.lang.Thread.sleep
 class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiveData(),
                     private val repositoryImpl: RepositoryImpl = RepositoryImpl()): ViewModel() {
 
-    fun getLiveData(): LiveData<AppState>{
-        return liveData
-    }
+    fun getLiveData() = liveData
+
+
 
         fun getWeatherFromLocalSourceRus()= getWeatherFromLocalServer(true)
 
@@ -28,21 +27,19 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
         liveData.postValue(AppState.Loading(10))
         Thread{
 
-            sleep(1000)
+            sleep(100)
             liveData.postValue(AppState.Error(IllegalStateException("")))
-            val rand = (1..40).random()
-            if(true) {
+
                 liveData.postValue(
                     AppState.Success(
-                        if (isRussian) repositoryImpl.getWeatherFromLocalStorageRus()
-                        else repositoryImpl.getWeatherFromLocalStorageWorld()
+                        with(repositoryImpl){
+                            if (isRussian) getWeatherFromLocalStorageRus()
+                            else getWeatherFromLocalStorageWorld()
+                        }
+
                     )
                 )
 
-            }else{
-               // liveData.postValue(AppState.Error(IllegalStateException("")))
-
-            }
 
         }.start()
     }
