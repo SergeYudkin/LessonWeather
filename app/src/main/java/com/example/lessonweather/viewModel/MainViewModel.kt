@@ -24,13 +24,13 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
 
 
     fun getWeatherFromLocalServer(isRussian:Boolean){
-        liveData.postValue(AppState.Loading(10))
-        Thread{
+        with(liveData){
+            postValue(AppState.Loading(10))
+            Thread{
+                sleep(100)
+                postValue(AppState.Error(IllegalStateException("")))
 
-            sleep(100)
-            liveData.postValue(AppState.Error(IllegalStateException("")))
-
-                liveData.postValue(
+                postValue(
                     AppState.Success(
                         with(repositoryImpl){
                             if (isRussian) getWeatherFromLocalStorageRus()
@@ -40,9 +40,9 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
                     )
                 )
 
+            }.start()
+        }
 
-        }.start()
     }
-
 
 }
