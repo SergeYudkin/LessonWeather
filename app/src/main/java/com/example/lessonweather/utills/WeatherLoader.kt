@@ -1,5 +1,8 @@
 package com.example.lessonweather.utills
 
+import android.os.Handler
+import android.os.Looper
+import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.model.WeatherDTO
 import com.google.gson.Gson
 import java.io.BufferedReader
@@ -17,13 +20,16 @@ class WeatherLoader(private val lat:Double,private val  lon:Double, private val 
             val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
                 requestMethod = "GET"
                 readTimeout = 3000
-                addRequestProperty("X-Yandex-API-Key", "8a6d62b9-8c7c-4b42-a829-789b9767b393")
+                addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
             }
 
             val bufferedReader = BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
             val weatherDTO : WeatherDTO? =
                 Gson().fromJson(convertBufferToResult(bufferedReader), WeatherDTO::class.java)
-            onWeatherLoaded.onLoaded(weatherDTO)
+            Handler(Looper.getMainLooper()).post{
+                onWeatherLoaded.onLoaded(weatherDTO)
+            }
+
         }.start()
     }
     private  fun convertBufferToResult(bufferedReader:BufferedReader):String{

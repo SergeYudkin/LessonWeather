@@ -43,12 +43,11 @@ class DetailsFragment: Fragment(), WeatherLoader.OnWeatherLoaded {
     private fun setWeatherData(weatherDTO: WeatherDTO) {
         with(binding) {
             with(localWeather) {
-                requireActivity().runOnUiThread {
                     cityName.text = city.name
                     cityCoordinates.text = "${city.lat} ${city.lon}"
                     temperatureValue.text = "${weatherDTO.fact.temp}"
                     feelsLikeValue.text = "${weatherDTO.fact.feelsLike}"
-                }
+
             }
         }
     }
