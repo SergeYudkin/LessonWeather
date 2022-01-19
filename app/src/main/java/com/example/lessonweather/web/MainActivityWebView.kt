@@ -14,7 +14,7 @@ import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
 import kotlin.contracts.contract
 
-class MainActivityWebView : AppCompatActivity() {        //в манифесте указана эта активити
+class MainActivityWebView : AppCompatActivity() {
 
     lateinit var binding: ActivityMainWebViewBinding
 

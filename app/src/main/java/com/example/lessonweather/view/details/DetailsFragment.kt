@@ -1,16 +1,19 @@
 package com.example.lessonweather.view.details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.lessonweather.databinding.FragmentDetailsBinding
 import com.example.lessonweather.model.Weather
+import com.example.lessonweather.model.WeatherDTO
+import com.example.lessonweather.utills.WeatherLoader
 
 const val BUNDLE_KEY = "key"
 
-class DetailsFragment: Fragment() {
+class DetailsFragment: Fragment(), WeatherLoader.OnWeatherLoaded {
 
 
 
@@ -23,26 +26,30 @@ class DetailsFragment: Fragment() {
 
 
 
-
+        lateinit var  localWeather: Weather
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
             arguments?.let {
-                it.getParcelable<Weather>(BUNDLE_KEY)?.run {
-                    setWeatherData(this)
+                it.getParcelable<Weather>(BUNDLE_KEY)?.let {
+                    localWeather = it
+                    WeatherLoader(it.city.lat,it.city.lon,this).loadWeather()
                 }
             }
 
 
         }
 
-    private fun setWeatherData(weather: Weather) {
-        with(binding){
-
-            cityName.text = weather.city.name
-            binding.cityCoordinates.text = "${weather.city.lat} ${weather.city.lon}"
-            binding.temperatureValue.text = "${weather.temperature}"
-            binding.feelsLikeValue.text = "${weather.feelsLike}"
+    private fun setWeatherData(weatherDTO: WeatherDTO) {
+        with(binding) {
+            with(localWeather) {
+                requireActivity().runOnUiThread {
+                    cityName.text = city.name
+                    cityCoordinates.text = "${city.lat} ${city.lon}"
+                    temperatureValue.text = "${weatherDTO.fact.temp}"
+                    feelsLikeValue.text = "${weatherDTO.fact.feelsLike}"
+                }
+            }
         }
     }
 
@@ -67,4 +74,16 @@ class DetailsFragment: Fragment() {
 
 
         }
+
+    override fun onLoaded(weatherDTO: WeatherDTO?) {
+
+        weatherDTO?.let {
+            setWeatherData(weatherDTO)
+        }
+        Log.d("","")
     }
+
+    override fun onFailed() {
+        //ДЗ
+    }
+}
