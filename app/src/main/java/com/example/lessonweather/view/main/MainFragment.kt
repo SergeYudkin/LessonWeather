@@ -89,7 +89,7 @@ class MainFragment : Fragment(), OnMyItemClickListener {
 
      }
 
-    fun View.actionErr(text:String,length:Int){
+    private fun View.actionErr(text:String,length:Int){
         Snackbar.make(this,text ,length )
             .setAction("Попробовать ещё раз") {
                 sentRequest()
