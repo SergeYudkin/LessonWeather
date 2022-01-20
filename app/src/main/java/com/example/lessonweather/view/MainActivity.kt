@@ -1,7 +1,7 @@
 package com.example.lessonweather.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.lessonweather.R
 import com.example.lessonweather.databinding.ActivityMainBinding
 import com.example.lessonweather.view.main.MainFragment

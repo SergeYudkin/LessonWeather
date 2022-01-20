@@ -4,6 +4,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.model.WeatherDTO
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -16,19 +17,25 @@ class WeatherLoader(private val lat:Double,private val  lon:Double, private val 
     fun loadWeather() {
 
         Thread {
-            val url = URL("https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon")
-            val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
-                requestMethod = "GET"
-                readTimeout = 3000
-                addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
+            try {
+                val url = URL("https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon")
+                val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
+                    requestMethod = "GET"
+                    readTimeout = 3000
+                    addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
+                }
+
+                val bufferedReader =
+                    BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
+                val weatherDTO: WeatherDTO? =
+                    Gson().fromJson(convertBufferToResult(bufferedReader), WeatherDTO::class.java)
+                Handler(Looper.getMainLooper()).post {
+                    onWeatherLoaded.onLoaded(weatherDTO)
+                }
+            }catch (e : Throwable){
+                onWeatherLoaded.onFailed("Error",Snackbar.LENGTH_LONG)
             }
 
-            val bufferedReader = BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
-            val weatherDTO : WeatherDTO? =
-                Gson().fromJson(convertBufferToResult(bufferedReader), WeatherDTO::class.java)
-            Handler(Looper.getMainLooper()).post{
-                onWeatherLoaded.onLoaded(weatherDTO)
-            }
 
         }.start()
     }
@@ -37,6 +44,10 @@ class WeatherLoader(private val lat:Double,private val  lon:Double, private val 
     }
     interface OnWeatherLoaded{
         fun onLoaded(weatherDTO: WeatherDTO?)
-        fun onFailed() // ДЗ
+
+        fun onFailed(text:String, length:Int){
+
+        }
+
     }
 }
