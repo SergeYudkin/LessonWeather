@@ -82,7 +82,7 @@ class DetailsFragment: Fragment(), WeatherLoader.OnWeatherLoaded {
         Log.d("","")
     }
 
-    override  fun onFailed(localWeather: Weather) {
+    //fun onFailed(localWeather: Weather) {
 
-    }
+
 }
