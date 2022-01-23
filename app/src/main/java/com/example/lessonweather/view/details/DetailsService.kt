@@ -1,5 +1,7 @@
-package com.example.lessonweather.utills
+package com.example.lessonweather.view.details
 
+import android.app.IntentService
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import com.example.lessonweather.BuildConfig
@@ -12,11 +14,20 @@ import java.net.URL
 import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
 
-class WeatherLoader(private val lat:Double,private val  lon:Double, private val onWeatherLoaded:OnWeatherLoaded) {
+const val DETAILS_SERVICE_KEY_EXTRAS = "key"
+
+
+class DetailsService (name: String=""):IntentService(name){
+
+
+
+    override fun onHandleIntent(intent: Intent?) {
+        loadWeather(lat, lon)
+    }
 
     fun loadWeather() {
 
-        Thread {
+
             try {
                 val url = URL("https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon")
                 val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
@@ -29,28 +40,28 @@ class WeatherLoader(private val lat:Double,private val  lon:Double, private val 
                     BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
                 val weatherDTO: WeatherDTO? =
                     Gson().fromJson(convertBufferToResult(bufferedReader), WeatherDTO::class.java)
-                Handler(Looper.getMainLooper()).post {
-                    onWeatherLoaded.onLoaded(weatherDTO)
-                }
+                    // не куда отправить знвчения
+
+
             }catch (e : Throwable){
-                onWeatherLoaded.onFailed("Error",Snackbar.LENGTH_LONG)
+                onWeatherLoaded.onFailed("Error", Snackbar.LENGTH_LONG)
             }
             finally {
-               // httpsURLConnection.disconnect()
+                // httpsURLConnection.disconnect()
             }
 
 
-        }.start()
+
     }
-    private  fun convertBufferToResult(bufferedReader:BufferedReader):String{
+    private  fun convertBufferToResult(bufferedReader: BufferedReader):String{
         return bufferedReader.lines().collect(Collectors.joining("\n"))
     }
-    interface OnWeatherLoaded{
-        fun onLoaded(weatherDTO: WeatherDTO?)
 
-        fun onFailed(text:String, length:Int){
+    override fun onCreate() {
+        super.onCreate()
+    }
 
-        }
-
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }
