@@ -1,14 +1,17 @@
 package com.example.lessonweather.model
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class WeatherDTO(
 
     val fact: Fact,
-)
+): Parcelable
 
-
+@Parcelize
 data class Fact (
 
     val temp: Long,
@@ -19,7 +22,4 @@ data class Fact (
     val icon: String,
     val condition: String,
 
-
-
-
-    )
+    ): Parcelable

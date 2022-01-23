@@ -2,8 +2,7 @@ package com.example.lessonweather.view.details
 
 import android.app.IntentService
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.model.WeatherDTO
 import com.google.android.material.snackbar.Snackbar
@@ -14,7 +13,6 @@ import java.net.URL
 import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
 
-const val DETAILS_SERVICE_KEY_EXTRAS = "key"
 
 
 class DetailsService (name: String=""):IntentService(name){
@@ -22,10 +20,15 @@ class DetailsService (name: String=""):IntentService(name){
 
 
     override fun onHandleIntent(intent: Intent?) {
-        loadWeather(lat, lon)
+        intent?.let {
+            val lat =intent.getDoubleExtra(BUNDLE_KEY_LAT,0.0)
+            val lon = intent.getDoubleExtra(BUNDLE_KEY_LON,0.0)
+            loadWeather(lat,lon)
+        }
+
     }
 
-    fun loadWeather() {
+    private fun loadWeather(lat:Double, lon: Double) {
 
 
             try {
@@ -40,14 +43,20 @@ class DetailsService (name: String=""):IntentService(name){
                     BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
                 val weatherDTO: WeatherDTO? =
                     Gson().fromJson(convertBufferToResult(bufferedReader), WeatherDTO::class.java)
-                    // не куда отправить знвчения
+
+                LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(Intent (BROADCAST_ACTION).apply {
+                    putExtra(BUNDLE_KEY_WEATHER, weatherDTO)
+                })// кричим в рамках приложения
+
+               /* sendBroadcast(Intent(BROADCAST_ACTION).apply {
+                    putExtra(BUNDLE_KEY_WEATHER,weatherDTO) }) */             // кричим на всё устройство
 
 
             }catch (e : Throwable){
-                onWeatherLoaded.onFailed("Error", Snackbar.LENGTH_LONG)
+              //  onWeatherLoaded("Error", Snackbar.LENGTH_LONG) // не понял как
             }
             finally {
-                // httpsURLConnection.disconnect()
+                // httpsURLConnection.disconnect() не понял как
             }
 
 
@@ -57,11 +66,7 @@ class DetailsService (name: String=""):IntentService(name){
         return bufferedReader.lines().collect(Collectors.joining("\n"))
     }
 
-    override fun onCreate() {
-        super.onCreate()
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+
+
 }

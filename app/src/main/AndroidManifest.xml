@@ -24,6 +24,20 @@
             android:name=".web.MainActivityWebView"
             android:exported="true">
         </activity>
+
+        <service android:name=".view.details.DetailsService">
+
+        </service>
+        <receiver
+
+            android:enabled="true"
+            android:exported="true"
+
+            android:name=".model.MyBroadcastReceiver">
+
+        </receiver>
+
+        <service android:name=".view.details.DetailsService"/>
     </application>
 
 </manifest>
