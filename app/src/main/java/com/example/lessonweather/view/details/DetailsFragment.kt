@@ -10,15 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.databinding.FragmentDetailsBinding
 import com.example.lessonweather.model.Weather
 import com.example.lessonweather.model.WeatherDTO
+import com.example.lessonweather.utills.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 
-const val BUNDLE_KEY = "key"
-const val BUNDLE_KEY_WEATHER = "key_weather_dto"
-const val BUNDLE_KEY_LAT = "key_lat"
-const val BUNDLE_KEY_LON = "key_lon"
-const val BROADCAST_ACTION = "BROADCAST_ACTION"
 
 class DetailsFragment: Fragment() {
 
@@ -42,8 +41,29 @@ class DetailsFragment: Fragment() {
         }
     }
 
+    private var client : OkHttpClient? = null
 
-        lateinit var  localWeather: Weather
+    fun getWeather(): OkHttpClient? {
+
+        val builder = Request.Builder()
+        builder.header(YANDEX_API_KEY,BuildConfig.WEATHER_API_KEY)
+        builder.url(YANDEX_API_URL+ YANDEX_API_URL_END_POINT+
+                "lat = ${localWeather.city.lat} lon = ${localWeather.city.lon}")
+
+        return okHttpClient()
+
+    }
+
+    private fun DetailsFragment.okHttpClient(): OkHttpClient? {
+        if (client == null) {
+            client = OkHttpClient()
+
+        }
+        return client
+    }
+
+
+    lateinit var  localWeather: Weather
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
 
