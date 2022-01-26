@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.lessonweather.R
 import com.example.lessonweather.databinding.FragmentMainBinding
 import com.example.lessonweather.model.Weather
-import com.example.lessonweather.view.details.BUNDLE_KEY
+import com.example.lessonweather.utills.BUNDLE_KEY
 import com.example.lessonweather.view.details.DetailsFragment
 import com.example.lessonweather.viewModel.AppState
 import com.example.lessonweather.viewModel.MainViewModel

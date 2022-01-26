@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.model.WeatherDTO
+import com.example.lessonweather.utills.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import java.io.BufferedReader
@@ -36,7 +37,7 @@ class DetailsService (name: String=""):IntentService(name){
                 val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
                     requestMethod = "GET"
                     readTimeout = 3000
-                    addRequestProperty("X-Yandex-API-Key", BuildConfig.WEATHER_API_KEY)
+                    addRequestProperty(YANDEX_API_KEY, BuildConfig.WEATHER_API_KEY)
                 }
 
                 val bufferedReader =
