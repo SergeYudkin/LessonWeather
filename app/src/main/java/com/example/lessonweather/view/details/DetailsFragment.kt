@@ -109,6 +109,14 @@ class DetailsFragment: Fragment() {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding =null
+        //  requireActivity().unregisterReceiver(receiver) // отключения общего
+        //  LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver) // отключение местного
+    }
+
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -118,12 +126,7 @@ class DetailsFragment: Fragment() {
         }
 
 
-        override fun onDestroy() {
-            super.onDestroy()
-            _binding =null
-          //  requireActivity().unregisterReceiver(receiver) // отключения общего
-          //  LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver) // отключение местного
-        }
+
 
         companion object {
             fun newInstance(bundle: Bundle) = DetailsFragment().apply { arguments = bundle }
