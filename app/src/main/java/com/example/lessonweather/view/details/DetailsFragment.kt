@@ -75,7 +75,7 @@ class DetailsFragment: Fragment() {
                     }
 
                 }else{
-                    //todo hw  1:13
+                    //todo HW  1:13
                 }
             }
         })
