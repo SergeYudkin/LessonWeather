@@ -10,7 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresFeature
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.databinding.FragmentDetailsBinding
 import com.example.lessonweather.model.Weather
