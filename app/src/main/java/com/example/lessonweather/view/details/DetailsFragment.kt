@@ -10,12 +10,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresFeature
 import androidx.fragment.app.Fragment
-
+import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.databinding.FragmentDetailsBinding
 import com.example.lessonweather.model.Weather
 import com.example.lessonweather.model.WeatherDTO
 import com.example.lessonweather.utills.*
+import com.example.lessonweather.viewModel.AppState
+import com.example.lessonweather.viewModel.DetailsViewModel
+import com.example.lessonweather.viewModel.MainViewModel
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException
@@ -32,7 +37,7 @@ class DetailsFragment: Fragment() {
                 return _binding!!
             }
 
-    private val receiver: BroadcastReceiver = object : BroadcastReceiver(){
+   /* private val receiver: BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             intent?.let {
                 it.getParcelableExtra<WeatherDTO>(BUNDLE_KEY_WEATHER)?.let {
@@ -41,72 +46,63 @@ class DetailsFragment: Fragment() {
 
             }
         }
-    }
+    }*/
 
-     private var client : OkHttpClient? = null
 
-    private fun getWeather(){
-       if (client==null)
-           client = OkHttpClient()
 
-        val builder = Request.Builder().apply {
-            header(YANDEX_API_KEY,BuildConfig.WEATHER_API_KEY)
-            url(YANDEX_API_URL+ YANDEX_API_URL_END_POINT+"?lat=${localWeather.city.lat}" +
-                    "&lon=${localWeather.city.lon}")
+      private  val viewModel: DetailsViewModel by lazy {
+            ViewModelProvider(this).get(DetailsViewModel::class.java)
         }
 
-       val request =  builder.build()
-       val call =  client?.newCall(request)
 
-
-        call?.enqueue(object : Callback{
-            override fun onFailure(call: Call, e: IOException) {
-
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful){
-                    response.body()?.let {
-                        val json = it.string()
-                        requireActivity().runOnUiThread{
-                            setWeatherData(Gson().fromJson(json, WeatherDTO::class.java))
-                        }
-
-                    }
-
-                }else{
-                    //todo HW  1:13
+    private fun renderData(appState: AppState){
+        with(binding) {
+            when (appState) {
+                is AppState.Error -> {
+                    //HW
+                }
+                is AppState.Loading -> {
+                    //HW
+                }
+                is AppState.Success -> {
+                    val weather = appState.weatherData[0]
+                    setWeatherData(weather)
                 }
             }
-        })
+        }
+
     }
 
 
         private lateinit var  localWeather: Weather
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-
+            viewModel.getLiveData().observe(viewLifecycleOwner,{
+                renderData(it)
+            })
             arguments?.let {
                 it.getParcelable<Weather>(BUNDLE_KEY)?.let {
                     localWeather = it
-                    getWeather()
-                    /*requireActivity().startService(Intent(requireActivity(),DetailsService::class.java).apply{  //  если  раскоментить этот код и код с коментом "регистрируем крик ресивера местный" то заработает
+                    viewModel.getWeatherFromRemoteServer(localWeather.city.lat,localWeather.city.lon)
+
+
+                  /*  requireActivity().startService(Intent(requireActivity(),DetailsService::class.java).apply{  //  если  раскоментить этот код и код с коментом "регистрируем крик ресивера местный" то заработает
                         putExtra(BUNDLE_KEY_LAT,it.city.lat)
                         putExtra(BUNDLE_KEY_LON,it.city.lon)
                     })*/
                 }
             }
            // requireActivity().registerReceiver(receiver, IntentFilter(BROADCAST_ACTION))  регистрируем общий крик ресивера
-               // LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver, IntentFilter(BROADCAST_ACTION)) // регистрируем крик ресивера местный
+                //LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver, IntentFilter(BROADCAST_ACTION)) // регистрируем крик ресивера местный
         }
 
-    private fun setWeatherData(weatherDTO: WeatherDTO) {
+    private fun setWeatherData(weather: Weather) {
         with(binding) {
             with(localWeather) {
                     cityName.text = city.name
                     cityCoordinates.text = "${city.lat} ${city.lon}"
-                    temperatureValue.text = "${weatherDTO.fact.temp}"
-                    feelsLikeValue.text = "${weatherDTO.fact.feelsLike}"
+                    temperatureValue.text = "${weather.temperature}"
+                    feelsLikeValue.text = "${weather.feelsLike}"
 
             }
         }
@@ -126,7 +122,7 @@ class DetailsFragment: Fragment() {
             super.onDestroy()
             _binding =null
           //  requireActivity().unregisterReceiver(receiver) // отключения общего
-           // LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver) // отключение местного
+          //  LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver) // отключение местного
         }
 
         companion object {
