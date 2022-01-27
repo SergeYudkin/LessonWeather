@@ -14,7 +14,8 @@ interface WeatherApi {
 
     fun getWeather(@Header(YANDEX_API_KEY) apikey:String,
                    @Query("lat") lat:Double,
-                   @Query("lon") lon:Double):Call<WeatherDTO>
+                   @Query("lon") lon:Double)
+    :Call<WeatherDTO>
 
 
 }

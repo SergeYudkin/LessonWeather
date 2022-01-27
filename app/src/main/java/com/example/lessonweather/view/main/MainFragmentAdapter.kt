@@ -23,6 +23,7 @@ class MainFragmentAdapter(val listener: OnMyItemClickListener): RecyclerView.Ada
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainFragmentAdapter.MainViewHolder {
         val binding: FragmentMainRecyclerCityItemBinding = FragmentMainRecyclerCityItemBinding
             .inflate(LayoutInflater.from(parent.context),parent,false)
+
             return MainViewHolder(binding.root)
     }
 
@@ -36,10 +37,20 @@ class MainFragmentAdapter(val listener: OnMyItemClickListener): RecyclerView.Ada
 
    inner class MainViewHolder(view: View):RecyclerView.ViewHolder(view){
         fun bind(weather: Weather){
-            itemView.findViewById<TextView>(R.id.mainFragmentRecyclerItemTextView).text = weather.city.name
-            itemView.setOnClickListener {
-                listener.onItemClick(weather)
+            with(FragmentMainRecyclerCityItemBinding.bind(itemView)){
+                mainFragmentRecyclerItemTextView.text = weather.city.name
+                root.setOnClickListener{
+                    listener.onItemClick(weather)
+                }
             }
+
+            FragmentMainRecyclerCityItemBinding.bind(itemView).run {
+                mainFragmentRecyclerItemTextView.text = weather.city.name
+                root.setOnClickListener{
+                    listener.onItemClick(weather)
+                }
+            }
+
         }
     }
 

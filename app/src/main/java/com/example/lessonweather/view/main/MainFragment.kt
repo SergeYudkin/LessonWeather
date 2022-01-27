@@ -44,7 +44,7 @@ class MainFragment : Fragment(), OnMyItemClickListener {
 
     private fun initView() {
         with(binding){mainFragmentRecyclerView.adapter = adapter
-        binding.mainFragmentFAB.setOnClickListener {
+        mainFragmentFAB.setOnClickListener {
             sentRequest()
         }
         }
@@ -75,7 +75,7 @@ class MainFragment : Fragment(), OnMyItemClickListener {
 
                 }
                 is AppState.Loading -> {
-                    mainFragmentLoadingLayout.visibility = View.GONE
+                    mainFragmentLoadingLayout.visibility = View.VISIBLE
                 }
                 is AppState.Success -> {
                     mainFragmentLoadingLayout.visibility = View.GONE

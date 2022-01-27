@@ -8,8 +8,13 @@ import com.example.lessonweather.repository.RepositoryImpl
 import java.lang.Thread.sleep
 
 class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiveData(),
-                    private val repositoryImpl: RepositoryImpl = RepositoryImpl()
+
 ): ViewModel() {
+    private val repositoryImpl: RepositoryImpl by lazy {
+        RepositoryImpl()
+    }
+
+
 
     fun getLiveData() = liveData
 
@@ -19,12 +24,11 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
 
         fun getWeatherFromLocalSourceWorld()= getWeatherFromLocalServer(false)
 
-        fun getWeatherFromLocalSource()= getWeatherFromLocalServer(true) // заглушка на пятый урок
 
 
 
 
-    fun getWeatherFromLocalServer(isRussian:Boolean){
+    private fun getWeatherFromLocalServer(isRussian:Boolean){
         with(liveData){
             postValue(AppState.Loading(10))
             Thread{
