@@ -7,6 +7,7 @@ import com.example.lessonweather.R
 import com.example.lessonweather.databinding.ActivityMainBinding
 import com.example.lessonweather.model.MyBroadcastReceiver
 import com.example.lessonweather.model.WeatherDTO
+import com.example.lessonweather.room.App
 import com.example.lessonweather.utills.BUNDLE_KEY
 import com.example.lessonweather.utills.BUNDLE_KEY_WEATHER
 import com.example.lessonweather.view.details.DetailsFragment
@@ -39,9 +40,11 @@ class MainActivity : AppCompatActivity() {
                 .commit()
 
         }
-
+           val listWeather =  App.getHistoryWeatherDao().getAllHistoryWeather()
 
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
