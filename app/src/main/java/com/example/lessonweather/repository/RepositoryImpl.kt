@@ -1,20 +1,14 @@
 package com.example.lessonweather.repository
 
 import com.example.lessonweather.BuildConfig
-import com.example.lessonweather.model.Weather
 import com.example.lessonweather.model.WeatherDTO
 import com.example.lessonweather.model.getRussianCities
 import com.example.lessonweather.model.getWorldCities
-import com.example.lessonweather.utills.YANDEX_API_KEY
 import com.example.lessonweather.utills.YANDEX_API_URL
-import com.example.lessonweather.utills.YANDEX_API_URL_END_POINT
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-import java.io.IOException
 
 class RepositoryImpl: RepositoryCitiesList, RepositoryDetails {
 

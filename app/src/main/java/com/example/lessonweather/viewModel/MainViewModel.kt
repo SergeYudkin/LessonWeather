@@ -4,6 +4,7 @@ package com.example.lessonweather.viewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.lessonweather.R
 import com.example.lessonweather.repository.RepositoryImpl
 import java.lang.Thread.sleep
 
@@ -30,13 +31,13 @@ class MainViewModel(private val liveData: MutableLiveData<AppState> = MutableLiv
 
     private fun getWeatherFromLocalServer(isRussian:Boolean){
         with(liveData){
-            postValue(AppState.Loading(10))
+            postValue(AppState.Loading(100))
             Thread{
-                sleep(100)
-                postValue(AppState.Error(IllegalStateException("")))
+                sleep(1000)
+                postValue(AppState.Error(R.string.serverError, 418))
 
                 postValue(
-                    AppState.Success(
+                    AppState.SuccessDetails(
                         with(repositoryImpl){
                             if (isRussian) getWeatherFromLocalStorageRus()
                             else getWeatherFromLocalStorageWorld()

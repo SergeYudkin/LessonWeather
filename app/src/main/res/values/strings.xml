@@ -8,5 +8,8 @@
     <string name="city_coordinates">lt/ln: %s, %s"</string>
     <string name="error">Error</string>
     <string name="reload">Reload</string>
+    <string name="serverError">Server error</string>
+    <string name="errorCode">Error code</string>
+
 
 </resources>

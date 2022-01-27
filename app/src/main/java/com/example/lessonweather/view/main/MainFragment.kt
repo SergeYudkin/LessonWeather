@@ -77,7 +77,7 @@ class MainFragment : Fragment(), OnMyItemClickListener {
                 is AppState.Loading -> {
                     mainFragmentLoadingLayout.visibility = View.VISIBLE
                 }
-                is AppState.Success -> {
+                is AppState.SuccessDetails -> {
                     mainFragmentLoadingLayout.visibility = View.GONE
 
                     adapter.setWeather(appState.weatherData)

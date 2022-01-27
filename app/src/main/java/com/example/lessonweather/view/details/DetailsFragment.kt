@@ -1,36 +1,22 @@
 package com.example.lessonweather.view.details
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.annotation.RequiresFeature
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.ImageLoader
 import coil.decode.SvgDecoder
 import coil.load
 import coil.request.ImageRequest
-import com.bumptech.glide.Glide
-import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.databinding.FragmentDetailsBinding
 import com.example.lessonweather.model.Weather
-import com.example.lessonweather.model.WeatherDTO
 import com.example.lessonweather.utills.*
 import com.example.lessonweather.viewModel.AppState
 import com.example.lessonweather.viewModel.DetailsViewModel
-import com.example.lessonweather.viewModel.MainViewModel
-import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
-import com.squareup.picasso.Picasso
 import okhttp3.*
-import java.io.IOException
 
 
 class DetailsFragment: Fragment() {
@@ -44,16 +30,7 @@ class DetailsFragment: Fragment() {
                 return _binding!!
             }
 
-   /* private val receiver: BroadcastReceiver = object : BroadcastReceiver(){
-        override fun onReceive(context: Context?, intent: Intent?) {
-            intent?.let {
-                it.getParcelableExtra<WeatherDTO>(BUNDLE_KEY_WEATHER)?.let {
-                    setWeatherData(it)
-                }
 
-            }
-        }
-    }*/
 
 
 
@@ -66,15 +43,16 @@ class DetailsFragment: Fragment() {
         with(binding) {
             when (appState) {
                 is AppState.Error -> {
-                    //HW
+                    appState.i
                 }
                 is AppState.Loading -> {
-                    //HW
+                   appState.progress
                 }
-                is AppState.Success -> {
+                is AppState.SuccessCity -> {
                     val weather = appState.weatherData[0]
                     setWeatherData(weather)
                 }
+                else -> {}
             }
         }
 
@@ -93,14 +71,10 @@ class DetailsFragment: Fragment() {
                     viewModel.getWeatherFromRemoteServer(localWeather.city.lat,localWeather.city.lon)
 
 
-                  /*  requireActivity().startService(Intent(requireActivity(),DetailsService::class.java).apply{  //  если  раскоментить этот код и код с коментом "регистрируем крик ресивера местный" то заработает
-                        putExtra(BUNDLE_KEY_LAT,it.city.lat)
-                        putExtra(BUNDLE_KEY_LON,it.city.lon)
-                    })*/
+
                 }
             }
-           // requireActivity().registerReceiver(receiver, IntentFilter(BROADCAST_ACTION))  регистрируем общий крик ресивера
-                //LocalBroadcastManager.getInstance(requireContext()).registerReceiver(receiver, IntentFilter(BROADCAST_ACTION)) // регистрируем крик ресивера местный
+
         }
 
     private fun setWeatherData(weather: Weather) {
@@ -145,8 +119,7 @@ class DetailsFragment: Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding =null
-        //  requireActivity().unregisterReceiver(receiver) // отключения общего
-        //  LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(receiver) // отключение местного
+
     }
 
 

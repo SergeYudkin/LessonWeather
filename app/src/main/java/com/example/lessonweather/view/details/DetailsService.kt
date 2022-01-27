@@ -3,19 +3,16 @@ package com.example.lessonweather.view.details
 
 import android.app.IntentService
 import android.content.Intent
-
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.model.WeatherDTO
 import com.example.lessonweather.utills.*
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.util.stream.Collectors
 import javax.net.ssl.HttpsURLConnection
-
 
 
 class DetailsService (name: String=""): IntentService(name){
@@ -34,40 +31,42 @@ class DetailsService (name: String=""): IntentService(name){
     private fun loadWeather(lat:Double, lon: Double) {
 
                     val url = URL("https://api.weather.yandex.ru/v2/informers?lat=$lat&lon=$lon")
-        Thread {
-                    val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
-                        requestMethod = "GET"
-                        readTimeout = 3000
-                        addRequestProperty(YANDEX_API_KEY, BuildConfig.WEATHER_API_KEY)
-                    }
 
-                    val bufferedReader =
-                        BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
-                    val weatherDTO: WeatherDTO? =
-                        Gson().fromJson(
-                            convertBufferToResult(bufferedReader),
-                            WeatherDTO::class.java
-                        )
+        try {
+            Thread {
+                val httpsURLConnection = (url.openConnection() as HttpsURLConnection).apply {
+                    requestMethod = "GET"
+                    readTimeout = 3000
+                    addRequestProperty(YANDEX_API_KEY, BuildConfig.WEATHER_API_KEY)
+                }
 
-                         val intent = Intent(DETAILS_INTENT_FILTER).apply {
-                            putExtra(BUNDLE_KEY_WEATHER, weatherDTO)
-                    }
+                val bufferedReader =
+                    BufferedReader(InputStreamReader(httpsURLConnection.inputStream))
+                val weatherDTO: WeatherDTO? =
+                    Gson().fromJson(
+                        convertBufferToResult(bufferedReader),
+                        WeatherDTO::class.java
+                    )
+
+                val intent = Intent(DETAILS_INTENT_FILTER).apply {
+                    putExtra(BUNDLE_KEY_WEATHER, weatherDTO)
+                }
 
 
-                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-                    httpsURLConnection.disconnect()
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+                httpsURLConnection.disconnect()
 
-                }.start()
+            }.start()
+        }catch (e:Throwable){
+                loadWeather(lat,lon)
+        }
 
-                 /*sendBroadcast(Intent(BROADCAST_ACTION).apply {
-                      putExtra(BUNDLE_KEY_WEATHER,weatherDTO) }) */             // кричим на всё устройство
 
 
     }
     private  fun convertBufferToResult(bufferedReader: BufferedReader):String{
         return bufferedReader.lines().collect(Collectors.joining("\n"))
     }
-
 
 
 

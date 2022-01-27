@@ -3,11 +3,8 @@ package com.example.lessonweather.view.main
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.lessonweather.R
 import com.example.lessonweather.databinding.FragmentMainRecyclerCityItemBinding
-
 import com.example.lessonweather.model.Weather
 
 class MainFragmentAdapter(val listener: OnMyItemClickListener): RecyclerView.Adapter<MainFragmentAdapter.MainViewHolder>() {
