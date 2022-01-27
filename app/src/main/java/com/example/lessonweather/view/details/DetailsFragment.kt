@@ -8,10 +8,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.RequiresFeature
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import coil.ImageLoader
+import coil.decode.SvgDecoder
+import coil.load
+import coil.request.ImageRequest
+import com.bumptech.glide.Glide
 import com.example.lessonweather.BuildConfig
 import com.example.lessonweather.databinding.FragmentDetailsBinding
 import com.example.lessonweather.model.Weather
@@ -22,6 +28,7 @@ import com.example.lessonweather.viewModel.DetailsViewModel
 import com.example.lessonweather.viewModel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import okhttp3.*
 import java.io.IOException
 
@@ -104,9 +111,35 @@ class DetailsFragment: Fragment() {
                     temperatureValue.text = "${weather.temperature}"
                     feelsLikeValue.text = "${weather.feelsLike}"
 
-            }
+
+              /*  Glide.with(requireActivity()).load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                    .into(headerIcon)
+
+                Picasso.get().load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")
+                    .into(headerIcon)*/
+
+                    headerIcon.load("https://freepngimg.com/thumb/city/36275-3-city-hd.png")          //Coil
+
+                weatherIcon.loadUrl("https://yastatic.net/weather/i/icons/funky/dark/${weather.icon}.svg")
+            }                                                        //     ДЗ  3:33
         }
     }
+
+    private fun ImageView.loadUrl(url: String) {
+
+        val imageLoader = ImageLoader.Builder(this.context)
+            .componentRegistry { add(SvgDecoder(this@loadUrl.context)) }
+            .build()
+
+        val request = ImageRequest.Builder(this.context)
+            .data(url)
+            .target(this)
+            .build()
+
+        imageLoader.enqueue(request)
+    }
+
+
 
 
     override fun onDestroy() {
